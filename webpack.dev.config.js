@@ -2,7 +2,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
-const prodConfig = {
+const devConfig = {
   devServer: {
     compress: true,
     contentBase: path.join(__dirname, path.resolve(__dirname, "docs")),
@@ -57,4 +57,4 @@ const prodConfig = {
   ]
 };
 
-module.exports = prodConfig;
+module.exports = devConfig;

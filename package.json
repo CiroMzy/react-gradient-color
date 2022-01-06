@@ -35,12 +35,16 @@
     "popup"
   ],
   "peerDependencies": {
-    "antd": "*",
-    "react": "*",
-    "react-color": "*"
+    "antd": "^4.18.2",
+    "react": "^16.13.1",
+    "react-color": "^2.19.3",
+    "react-dom": "^16.13.1"
   },
   "devDependencies": {
-    "antd": "^4.18.2",
+    "antd": "4.18.2",
+    "react": "16.13.1",
+    "react-color": "2.19.3",
+    "react-dom": "16.13.1",
     "@babel/cli": "^7.5.5",
     "@babel/core": "^7.16.7",
     "@babel/plugin-proposal-class-properties": "^7.5.0",
@@ -77,9 +81,6 @@
     "normalize.css": "^4.1.1",
     "npm": "^5.3.0",
     "object-assign": "^4.1.0",
-    "react": "^17.0.2",
-    "react-color": "^2.19.3",
-    "react-dom": "^17.0.2",
     "remarkable": "^1.6.0",
     "require-dir": "^0.3.0",
     "rimraf": "^2.5.0",

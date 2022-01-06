@@ -1,0 +1,33 @@
+.gradient-demo-container{
+  padding: 24px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  .gradient-demo{
+    margin-top: 24px;
+    width: 350px;
+
+  }
+
+  .btn{
+    width: 24px;
+    height: 24px;
+    border-radius: 12px;
+    position: relative;
+    border: 1px solid #e1e3e5;
+    overflow: hidden;
+    cursor: pointer;
+    &.empty::after{
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 2px;
+      background: #e1e3e5;
+      top: 50%;
+      margin-top: -1px;
+      transform: rotate(45deg);
+    }
+  }
+}

@@ -1,5 +1,5 @@
 import React, { Component, createRef } from "react";
-import { createRandomId } from "./util";
+import { createRandomId, getValidateRatio } from "./util";
 
 
 export default class PointSlider extends Component {
@@ -18,7 +18,8 @@ export default class PointSlider extends Component {
     const targetLeft = $target.getBoundingClientRect().left;
     const targetWidth = $target.offsetWidth;
     const mouseLeft = e.pageX;
-    return parseInt(((mouseLeft - targetLeft - 9) * 100) / targetWidth);
+    const ratio = parseInt(((mouseLeft - targetLeft - 9) * 100) / targetWidth)
+    return getValidateRatio(ratio);
   }
 
   addPoint(e) {
@@ -28,7 +29,7 @@ export default class PointSlider extends Component {
     const arr = pointList.map(item => ({ ...item, active: false }));
     arr.push({
       ...actValue,
-      distance: `${Math.max(0, Math.min(100, ratio))}%`,
+      distance: `${getValidateRatio(ratio)}%`,
       id: createRandomId(),
       active: true
     });

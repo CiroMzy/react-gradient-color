@@ -1,5 +1,4 @@
 import React, { Component, createRef } from "react";
-import { findDOMNode } from "react-dom";
 import { InputNumber, message } from "antd";
 import { ChromePicker } from "react-color";
 import PointSlider from "./PointSlider";
@@ -31,7 +30,6 @@ class GradientColor extends Component {
     this.activeId = null;
   }
   componentDidMount() {
-    document.addEventListener("click", this.onClickHandler);
     this.resetData(this.props.value);
   }
 
@@ -48,10 +46,6 @@ class GradientColor extends Component {
     }
   }
 
-  componentWillUnmount() {
-    document.removeEventListener("click", this.onClickHandler);
-  }
-
   isColorEqual(color1, color2) {
     return color1.replace(/\s/g, "") === color2.replace(/\s/g, "");
   }
@@ -61,20 +55,10 @@ class GradientColor extends Component {
     this.onChangePointList(pointList, { linearDeg, gradientType });
   }
 
-  onClickHandler = (e) => {
-    const { onClose } = this.props;
-    if (this.$container.current) {
-      let result = findDOMNode(this.$container.current).contains(e.target);
-      if (!result) {
-        onClose();
-      }
-    }
-  };
-
   onChangeValue(val) {
     const { onChange } = this.props;
     setTimeout(() => {
-      onChange(val);
+      onChange && onChange(val);
     });
   }
 
@@ -222,7 +206,7 @@ class GradientColor extends Component {
   substruction = () => {
     const { pointList } = this.state;
     if (pointList.length <= 2) {
-      message.error("最少保留种颜色");
+      // message.error("最少保留种颜色");
       return;
     }
     const arr = pointList.filter(({ active }) => !active);
@@ -404,4 +388,4 @@ class GradientColor extends Component {
     );
   }
 }
-module.exports = GradientColor
+export default GradientColor
