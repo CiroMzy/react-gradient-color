@@ -1,0 +1,105 @@
+{
+  "name": "react-gradient-color",
+  "version": "1.0.0",
+  "description": "A Gradient Color Picker Based On react-color And React",
+  "main": "lib/index.js",
+  "module": "es/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CiroMzy/react-gradient-color.git"
+  },
+  "author": "CiroMzy <414739610@qq.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/CiroMzy/react-gradient-color/issues"
+  },
+  "scripts": {
+    "clean-lib": "rm -rf lib && mkdir lib",
+    "lib": "npm run clean-lib && babel src -d lib",
+    "dev": "cross-env webpack serve  --config webpack.dev.config.js",
+    "build": "cross-env webpack --config webpack.build.config.js"
+  },
+  "sideEffects": false,
+  "homepage": "https://github.com/CiroMzy/react-gradient-color/",
+  "keywords": [
+    "gradient color picker",
+    "color picker",
+    "react",
+    "react-component",
+    "colorpicker",
+    "picker",
+    "sketch",
+    "chrome",
+    "photoshop",
+    "material design",
+    "popup"
+  ],
+  "peerDependencies": {
+    "antd": "*",
+    "react": "*",
+    "react-color": "*"
+  },
+  "devDependencies": {
+    "antd": "^4.18.2",
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.16.7",
+    "@babel/plugin-proposal-class-properties": "^7.5.0",
+    "@babel/plugin-proposal-decorators": "^7.16.7",
+    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.12.1",
+    "@babel/plugin-proposal-numeric-separator": "^7.2.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.5.4",
+    "@babel/plugin-proposal-optional-chaining": "^7.8.3",
+    "@babel/plugin-syntax-dynamic-import": "^7.8.3",
+    "@babel/preset-env": "^7.16.7",
+    "@babel/preset-react": "^7.16.7",
+    "@babel/preset-typescript": "^7.7.4",
+    "@babel/runtime": "^7.7.6",
+    "@case/eslint-config": "^0.3.1",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-loader": "^8.2.3",
+    "babel-plugin-react-intl": "^5.1.11",
+    "babel-plugin-react-intl-auto": "^3.1.0",
+    "chai": "^3.3.0",
+    "chai-spies": "^0.7.1",
+    "cross-env": "^7.0.3",
+    "css-loader": "^0.24.0",
+    "enzyme": "2.8.2",
+    "event-stream": "^3.3.1",
+    "fbjs": "^0.8.6",
+    "highlight.js": "^9.3.0",
+    "html-loader": "^0.3.0",
+    "html-webpack-plugin": "^3.2.0",
+    "i": "^0.3.5",
+    "jest": "^20.0.4",
+    "jest-cli": "^20.0.4",
+    "jsx-loader": "^0.13.2",
+    "mocha": "^2.4.5",
+    "normalize.css": "^4.1.1",
+    "npm": "^5.3.0",
+    "object-assign": "^4.1.0",
+    "react": "^17.0.2",
+    "react-color": "^2.19.3",
+    "react-dom": "^17.0.2",
+    "remarkable": "^1.6.0",
+    "require-dir": "^0.3.0",
+    "rimraf": "^2.5.0",
+    "sass": "^1.46.0",
+    "sass-loader": "^10.2.0",
+    "sass-resources-loader": "^2.2.4",
+    "style-loader": "^0.13.2",
+    "testdom": "^2.0.0",
+    "webpack": "^4.46.0",
+    "webpack-cli": "^4.9.1",
+    "webpack-dev-server": "^3.11.2"
+  },
+  "files": [
+    "lib",
+    "es"
+  ],
+  "eslintConfig": {
+    "extends": "@case",
+    "rules": {
+      "no-magic-numbers": 0
+    }
+  }
+}

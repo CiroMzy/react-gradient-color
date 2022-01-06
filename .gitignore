@@ -1,0 +1,9 @@
+*.log
+*.DS_Store
+node_modules
+package-lock.json
+yarn.lock
+
+lib
+es
+.babelrc_backup

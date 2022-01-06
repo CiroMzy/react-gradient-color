@@ -1,0 +1,10 @@
+{
+  "presets": ["@babel/preset-react", ["@babel/preset-env", {
+    "modules": "commonjs"
+  }]],
+  "plugins": [
+    ["@babel/plugin-proposal-decorators", {
+      "legacy": true
+    }] // 转义ES7的修饰器@
+  ]
+}
