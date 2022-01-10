@@ -1,13 +1,18 @@
 import React, { Component, createRef } from "react";
-import { InputNumber, message } from "antd";
 import { ChromePicker } from "react-color";
-import PointSlider from "./PointSlider";
-import { createRandomId } from "./util";
+import PointSlider from "./components/PointSlider";
+import DefaultColorList from "./components/DefaultColorList";
+import HistoryColorList from "./components/HistoryColorList";
+import InputNumber from "./components/InputNumber";
+import DeleteBtn from "./components/DeleteBtn";
+import GradientType from "./components/GradientType";
+import ColorStop from "./components/ColorStop";
+import { createRandomId, getRgbaObj, getConcatValue, parseValue, isColorEqual } from "./util";
 import {
-  DEFAULT_COLOR_LIST,
   DEFAULT_EDIT_TYPE,
   DEFAULT_GRADIENT_TYPE,
   DEFAULT_LINEAR_DEG,
+  DEFAULT_ADD_DISTANCE
 } from "./ENUM";
 import "./gradientColor.module.scss";
 
@@ -35,89 +40,44 @@ class GradientColor extends Component {
 
   componentDidUpdate(preProps) {
     const prePropsValue = preProps.value;
-    const curValue = this.getConcatValue();
+    const { gradientType, linearDeg, pointList } = this.state;
+    const curValue = getConcatValue({
+      gradientType,
+      linearDeg,
+      pointList,
+    });
 
     if (
       prePropsValue &&
       prePropsValue.indexOf("-gradient(") > -1 &&
-      !this.isColorEqual(prePropsValue, curValue)
+      !isColorEqual(prePropsValue, curValue)
     ) {
       this.onChangeValue(curValue);
     }
   }
 
-  isColorEqual(color1, color2) {
-    return color1.replace(/\s/g, "") === color2.replace(/\s/g, "");
-  }
-
-  resetData(propsValue) {
-    const { pointList, linearDeg, gradientType } = this.parseValue(propsValue);
-    this.onChangePointList(pointList, { linearDeg, gradientType });
+  resetData(colorString) {
+    const { pointList, linearDeg, gradientType } = this.state;
+    const parsedValue = parseValue({
+      pointList,
+      linearDeg,
+      gradientType,
+      colorString,
+    });
+    this.onChangePointList(parsedValue.pointList, {
+      linearDeg: parsedValue.linearDeg,
+      gradientType: parsedValue.gradientType,
+    });
   }
 
   onChangeValue(val) {
     const { onChange } = this.props;
-    setTimeout(() => {
-      onChange && onChange(val);
-    });
+    onChange && onChange(val);
   }
 
   getActiveValue() {
     const { pointList } = this.state;
     return pointList.find(({ active }) => active) || {};
-  }
-
-  getConcatValue(props = {}) {
-    const state = props.state || this.state;
-    const isLinear = props.isLinear;
-    const { gradientType, linearDeg, pointList } = state;
-    const type = isLinear ? "linear" : gradientType;
-    if (!pointList.length) {
-      return "";
-    }
-
-    return `${type}-gradient(${
-      type === "linear" ? `${linearDeg}deg, ` : ""
-    }${pointList.map(({ color, distance }) => `${color} ${distance}`)})`;
-  }
-
-  parseValue(str) {
-    let pointList = [];
-    let colorString = str;
-    if (!colorString) {
-      return { ...this.state, pointList: [] };
-    }
-    let gradientType,
-      linearDeg = this.state.linearDeg;
-    let noGradientStr = colorString.replace(
-      /^(.*?)-gradient\(([\s\S]*)\)/g,
-      function ($0, $1, $2) {
-        gradientType = $1;
-        return $2;
-      }
-    );
-    if (gradientType === "linear") {
-      noGradientStr = noGradientStr.replace(/^(\d+)deg,/g, function ($0, $1) {
-        linearDeg = $1;
-        return "";
-      });
-    }
-
-    let list = [];
-    noGradientStr.replace(/\s{0,}(rgb.*?\)\s{0,}\d+\%)/g, function ($0, $1) {
-      list.push($1);
-      return $1;
-    });
-    pointList = list.map((str) => {
-      const obj = {};
-      str.replace(/(rgb.*?\))\s{0,}(\d+%)/g, function ($0, $1, $2) {
-        obj.color = $1;
-        obj.distance = $2;
-        obj.id = createRandomId();
-      });
-      return obj;
-    });
-    return { pointList, linearDeg, gradientType };
   }
 
   onChangePointList = (list, config = {}) => {
@@ -149,25 +109,6 @@ class GradientColor extends Component {
     act.distance = `${distance}%`;
     this.onChangePointList(pointList);
   };
-
-  getRgbaObj(rgbaString) {
-    let arr = [];
-    if (!rgbaString) {
-      arr = [255, 255, 255, 1];
-    } else {
-      let str = "";
-      rgbaString.replace(/rgb\w?\((.*?)\)/g, function ($0, $1) {
-        str = $1;
-      });
-      arr = str.split(",").map((i) => i.replace(/\s/g, ""));
-    }
-    return {
-      r: arr[0],
-      g: arr[1],
-      b: arr[2],
-      a: arr[3] == undefined ? 1 : arr[3],
-    };
-  }
 
   pushHistory(color) {
     const { history } = this.state;
@@ -219,173 +160,84 @@ class GradientColor extends Component {
     const act = this.getActiveValue();
     pointList.push({
       ...act,
-      distance: "45%",
+      distance: DEFAULT_ADD_DISTANCE,
       active: false,
       id: createRandomId(),
     });
     this.onChangePointList(pointList);
   };
 
-  renderEditingBoard() {
+  render() {
+    const { style } = this.props;
     const { history, pointList, gradientType, linearDeg } = this.state;
-    const colorString = this.getConcatValue();
-    const linearColorString = this.getConcatValue({ isLinear: true });
+    const colorString = getConcatValue({
+      gradientType,
+      linearDeg,
+      pointList,
+    });
+    const linearColorString = getConcatValue({
+      gradientType,
+      linearDeg,
+      pointList,
+      isLinear: true,
+    });
     const actValue = this.getActiveValue();
     return (
-      <div>
-        <div
-          className="gradient-dasboard"
-          style={{ background: colorString }}
-        ></div>
-        <div className="gradient-type-container">
-          <div className="gradient-type">
-            {["linear", "radial"].map((type) => (
-              <input
-                type="radio"
-                className={`gradient-type-btn ${type} ${
-                  type === gradientType ? "active" : ""
-                }`}
-                onClick={() => this.onChangeGradientType(type)}
-                key={type}
-              />
-            ))}
-          </div>
-          {gradientType === "linear" && (
-            <div className="gradient-linear-deg">
-              <InputNumber
-                min={0}
-                value={linearDeg}
-                onChange={(e) => this.onChangeDeg(e)}
-              />
-            </div>
-          )}
-        </div>
-        <PointSlider
-          pointList={pointList}
-          onChangePointList={this.onChangePointList}
-          colorString={colorString}
-          linearColorString={linearColorString}
-          actValue={actValue}
-        />
-
-        <div className="gradient-line">
-          <span>颜色停止点：</span>
-          <div className="gradient-stop-container">
-            <button onClick={this.addition}>
-              <span>
-                <svg
-                  viewBox="0 0 20 20"
-                  className="Polaris-Icon__Svg_375hu"
-                  focusable="false"
-                  aria-hidden="true"
-                >
-                  <path d="M17 9h-6V3a1 1 0 1 0-2 0v6H3a1 1 0 1 0 0 2h6v6a1 1 0 1 0 2 0v-6h6a1 1 0 1 0 0-2z"></path>
-                </svg>
-              </span>
-            </button>
-            <button onClick={this.substruction}>
-              <span>
-                <svg
-                  viewBox="0 0 20 20"
-                  className="Polaris-Icon__Svg_375hu"
-                  focusable="false"
-                  aria-hidden="true"
-                >
-                  <path d="M15 9H5a1 1 0 1 0 0 2h10a1 1 0 1 0 0-2z"></path>
-                </svg>
-              </span>
-            </button>
-          </div>
-        </div>
-        <div className="gradient-position">
-          <div>位置：</div>
-          <div>
-            <InputNumber
-              min={0}
-              max={100}
-              value={parseFloat(actValue.distance)}
-              onChange={this.onChangePosition}
-            />
-          </div>
-        </div>
-        <ChromePicker
-          color={this.getRgbaObj(actValue.color)}
-          onChange={this.handleColorChange}
-        />
-        <div className="history-list">
-          <div>最近所选：</div>
-          <div className="list">
-            {history.map((color) => (
-              <button
-                onClick={() => this.setActiveColor(color)}
-                type="button"
-                className="item"
-                aria-label="最近所选"
-                key={color}
-              >
-                <div
-                  className="btn"
-                  style={{
-                    background: color,
-                  }}
-                ></div>
-              </button>
-            ))}
-          </div>
-        </div>
-        <div
-          className="clean-value-container"
-          onClick={() => this.onSelectDefault("")}
-        >
-          <button className="clean-btn-container" type="button">
-            <span className="clean-btn">
-              <svg
-                viewBox="0 0 20 20"
-                className="Polaris-Icon__Svg_375hu"
-                focusable="false"
-                aria-hidden="true"
-              >
-                <path d="M8 3.994C8 2.893 8.895 2 10 2s2 .893 2 1.994h4c.552 0 1 .446 1 .997a1 1 0 0 1-1 .997H4c-.552 0-1-.447-1-.997s.448-.997 1-.997h4zM5 14.508V8h2v6.508a.5.5 0 0 0 .5.498H9V8h2v7.006h1.5a.5.5 0 0 0 .5-.498V8h2v6.508A2.496 2.496 0 0 1 12.5 17h-5C6.12 17 5 15.884 5 14.508z"></path>
-              </svg>
-            </span>
-            <div className="_WrappedContent_1blto_112">
-              <div className="_Content_1blto_124">删除梯度</div>
-            </div>
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  renderDefaultSelection() {
-    return (
-      <div className="defaultSelection">
-        <p className="info">选择渐变颜色</p>
-        <ul>
-          {DEFAULT_COLOR_LIST.map((item) => (
-            <li
-              key={item}
-              style={{ background: item }}
-              onClick={(e) => this.onSelectDefault(item)}
-            ></li>
-          ))}
-        </ul>
-      </div>
-    );
-  }
-
-  render() {
-    const { style } = this.props
-    const { pointList } = this.state;
-    return (
-      <div className="gradient-color-picker-container" ref={this.$container}
-      style={ style }
+      <div
+        className="gradient-color-picker-container"
+        ref={this.$container}
+        style={style}
       >
-        {!!pointList.length
-          ? this.renderEditingBoard()
-          : this.renderDefaultSelection()}
+        {!pointList.length ? (
+          <DefaultColorList onChange={(color) => this.onSelectDefault(color)} />
+        ) : (
+          <>
+            <div
+              className="gradient-dasboard"
+              style={{ background: colorString }}
+            ></div>
+            <GradientType
+              gradientType={gradientType}
+              linearDeg={linearDeg}
+              onChangeGradientType={type => this.onChangeGradientType(type)}
+              onChangeDeg={e => this.onChangeDeg(e)}
+            />
+            <PointSlider
+              pointList={pointList}
+              onChangePointList={this.onChangePointList}
+              colorString={colorString}
+              linearColorString={linearColorString}
+              actValue={actValue}
+            />
+
+            <ColorStop
+              onAdd={this.addition}
+              onSubstruction={this.substruction}
+            />
+            <div className="gradient-position">
+              <div>位置：</div>
+              <div>
+                <InputNumber
+                  min={0}
+                  max={100}
+                  value={parseFloat(actValue.distance)}
+                  onChange={this.onChangePosition}
+                />
+              </div>
+            </div>
+            <ChromePicker
+              color={getRgbaObj(actValue.color)}
+              onChange={this.handleColorChange}
+            />
+            <HistoryColorList
+              history={history}
+              onChange={(color) => this.setActiveColor(color)}
+            />
+            <DeleteBtn onClick={() => this.onSelectDefault("")} />
+          </>
+        )}
       </div>
     );
   }
 }
-export default GradientColor
+export default GradientColor;

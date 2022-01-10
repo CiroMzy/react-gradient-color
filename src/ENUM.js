@@ -16,3 +16,4 @@ export const DEFAULT_COLOR_LIST = [
 export const DEFAULT_EDIT_TYPE = "gradient";
 export const DEFAULT_GRADIENT_TYPE = "linear";
 export const DEFAULT_LINEAR_DEG = "64";
+export const DEFAULT_ADD_DISTANCE = "45%";
