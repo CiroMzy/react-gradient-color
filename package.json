@@ -1,6 +1,6 @@
 {
   "name": "react-gradient-color",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A Gradient Color Picker Based On react-color And React",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -17,7 +17,8 @@
     "clean-lib": "rm -rf lib && mkdir lib",
     "lib": "npm run clean-lib && babel src -d lib",
     "dev": "cross-env webpack serve  --config webpack.dev.config.js",
-    "build": "cross-env webpack --config webpack.build.config.js"
+    "build": "cross-env webpack --config webpack.build.config.js",
+    "build:doc": "cross-env BUILD_TYPE=doc webpack --config webpack.dev.config.js"
   },
   "sideEffects": false,
   "homepage": "https://github.com/CiroMzy/react-gradient-color/",

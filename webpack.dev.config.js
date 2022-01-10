@@ -2,6 +2,8 @@
 const path = require('path');
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
+const outputPath = process.env.BUILD_TYPE === 'doc' ? 'docs/dist' : 'docs'
+
 const devConfig = {
   devServer: {
     compress: true,
@@ -18,7 +20,7 @@ const devConfig = {
   },
   output: {
     filename: '[name].js',
-    path: path.resolve(__dirname, 'docs'),
+    path: path.resolve(__dirname, outputPath),
   },
   resolve: {
     extensions: ['.js', '.jsx'],
