@@ -21,23 +21,21 @@
 ### 环境介绍
 - 基于react
 - 基于react color
+- "antd": "^4.18.2"
 
 
 
-### 运行
-- 启动
+### 参数
+ * @param {string} value 当前选中渐变颜色
+ * @param {fn} onChange 当前选中颜色更新
+ * @param {object} style 容器样式
+```jsx
+<GradientColor
+  value=""
+  onChange={onChange}
+  style={{height: "100px"}}
+/>
 ```
-> $ npm run dev
-```
-
-- 打包
-
-```
-> $ npm run build
-```
-
-
-
 
 
 
